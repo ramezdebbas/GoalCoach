@@ -1,0 +1,211 @@
+﻿<common:LayoutAwarePage
+    x:Name="pageRoot"
+    x:Class="HealthAndFitness.ItemDetailPage"
+    DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HealthAndFitness"
+    xmlns:data="using:HealthAndFitness.Data"
+    xmlns:common="using:HealthAndFitness.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.TopAppBar>
+        <AppBar x:Name="TopApp" Padding="10,0,10,0" MinHeight="110" Background="#F4151515" BorderBrush="#F4151515">
+            <Grid Height="100" Margin="40,0">
+                <StackPanel Margin="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <Button x:Name="btnHome" HorizontalAlignment="Right" BorderBrush="{x:Null}" BorderThickness="0" FontWeight="Normal" VerticalAlignment="Center" Padding="0" Style="{StaticResource TopAppbarBtnStyle}" Click="btnHome_Click"  >
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="84" Margin="0" Width="84" Background="#00464646">
+                            <Image Source="Assets/AppBarImages/TopAppBarBtn1.png" Margin="0"/>
+                        </Grid>
+                    </Button>
+                    <Button x:Name="btnService" Tag="Service" HorizontalAlignment="Right" BorderBrush="{x:Null}" BorderThickness="0" FontWeight="Normal" VerticalAlignment="Center" Padding="0" Style="{StaticResource TopAppbarBtnStyle}" Margin="0" Click="btnService_Click"  >
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="84" Margin="0" Width="84" Background="#00464646">
+                            <Image Source="Assets/AppBarImages/TopAppBarBtn2.png" Margin="0"/>
+                        </Grid>
+                    </Button>
+                    <Button x:Name="btnGear" Tag="Gear" HorizontalAlignment="Right" BorderBrush="{x:Null}" BorderThickness="0" FontWeight="Normal" VerticalAlignment="Center" Padding="0" Style="{StaticResource TopAppbarBtnStyle}" Margin="0" Click="btnGear_Click">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="84" Margin="0" Width="84" Background="#00464646">
+                            <Image Source="Assets/AppBarImages/TopAppBarBtn3.png" Margin="0"/>
+                        </Grid>
+                    </Button>
+                    <Button x:Name="btnNews" Tag="News" HorizontalAlignment="Right" BorderBrush="{x:Null}" BorderThickness="0" FontWeight="Normal" VerticalAlignment="Center" Padding="0" Style="{StaticResource TopAppbarBtnStyle}" Margin="0" Click="btnNews_Click"  >
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="84" Margin="0" Width="84" Background="#00464646">
+                            <Image Source="Assets/AppBarImages/TopAppBarBtn4.png" Margin="0"/>
+                        </Grid>
+                    </Button>
+                    <Button x:Name="btnRecipes" Tag="Recipes" HorizontalAlignment="Right" BorderBrush="{x:Null}" BorderThickness="0" FontWeight="Normal" VerticalAlignment="Center" Padding="0" Style="{StaticResource TopAppbarBtnStyle}" Margin="0" Click="btnRecipes_Click" >
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="84" Margin="0" Width="84" Background="#00464646">
+                            <Image Source="Assets/AppBarImages/TopAppBarBtn5.png" Margin="0"/>
+                        </Grid>
+                    </Button>
+                    <Button x:Name="btnInterviews" Tag="Interviews" HorizontalAlignment="Right" BorderBrush="{x:Null}" BorderThickness="0" FontWeight="Normal" VerticalAlignment="Center" Padding="0" Style="{StaticResource TopAppbarBtnStyle}" Margin="0" Click="btnInterviews_Click" >
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="84" Margin="0" Width="84" Background="#00464646">
+                            <Image Source="Assets/AppBarImages/TopAppBarBtn6.png" Margin="0"/>
+                        </Grid>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </AppBar>
+    </Page.TopAppBar>
+
+    <Page.Resources>
+
+        <!-- Collection of items displayed by this page -->
+        <CollectionViewSource
+            x:Name="itemsViewSource"
+            Source="{Binding Items}"
+            d:Source="{Binding AllGroups[0].Items, Source={d:DesignInstance Type=data:SampleDataSource, IsDesignTimeCreatable=True}}"/>
+    </Page.Resources>
+
+    <!--
+        This grid acts as a root panel for the page that defines two rows:
+        * Row 0 contains the back button and page title
+        * Row 1 contains the rest of the page layout
+    -->
+    <Grid
+        Style="{StaticResource LayoutRootStyle}"
+        DataContext="{Binding Group}"
+        d:DataContext="{Binding AllGroups[0], Source={d:DesignInstance Type=data:SampleDataSource, IsDesignTimeCreatable=True}}" Background="#FFE6E6E6">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="140"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--
+            The remainder of the page is one large FlipView that displays details for
+            one item at a time, allowing the user to flip through all items in the chosen
+            group
+        -->
+        <FlipView
+            x:Name="flipView"
+            AutomationProperties.AutomationId="ItemsFlipView"
+            AutomationProperties.Name="Item Details"
+            TabIndex="1" SelectionChanged="flipView_SelectionChanged_1"
+             Style="{StaticResource FlipViewStyle1}"  Grid.Row="1">
+
+            <FlipView.ItemTemplate>
+                <DataTemplate>
+
+                    <!--
+                        UserControl chosen as the templated item because it supports visual state management
+                        Loaded/unloaded events explicitly subscribe to view state updates from the page
+                    -->
+                    <UserControl Loaded="StartLayoutUpdates" Unloaded="StopLayoutUpdates">
+                        <ScrollViewer x:Name="scrollViewer" Style="{StaticResource HorizontalScrollViewerStyle}" Grid.Row="1">
+
+                            <!-- Content is allowed to flow across as many columns as needed -->
+                            <!-- Content is allowed to flow across as many columns as needed -->
+                            <common:RichTextColumns x:Name="richTextColumns" Margin="117,0,117,47">
+                                <common:RichTextColumns.ColumnTemplate>
+                                    <DataTemplate>
+                                        <RichTextBlockOverflow Margin="80,0,0,0" Width="450">
+                                            <RichTextBlockOverflow.RenderTransform>
+                                                <TranslateTransform X="-1" Y="4"/>
+                                            </RichTextBlockOverflow.RenderTransform>
+                                        </RichTextBlockOverflow>
+                                    </DataTemplate>
+                                </common:RichTextColumns.ColumnTemplate>
+                                <RichTextBlock x:Name="richTextBlock" IsTextSelectionEnabled="False" Style="{StaticResource ItemRichTextStyle}" Width="560">
+                                    <Paragraph LineStackingStrategy="MaxHeight">
+                                        <InlineUIContainer>
+                                            <Grid Background="#DEA80A0A">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="50"/>
+                                                </Grid.RowDefinitions>
+                                                <Image x:Name="image" MaxHeight="480" Margin="0" AutomationProperties.Name="{Binding Title}" Source="{Binding Image}" Stretch="Uniform"/>
+                                                <StackPanel Margin="15,0,0,0" Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
+                                                    <TextBlock Foreground="#FFFFFFFF" FontWeight="SemiBold" FontSize="18.667" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Title}" VerticalAlignment="Top"/>
+                                                    <TextBlock Foreground="#FFFFFFFF" FontSize="13.333" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="{Binding Subtitle}" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </InlineUIContainer>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        <Run FontWeight="SemiLight" Text="{Binding Content}"/>
+                                    </Paragraph>
+                                </RichTextBlock>
+                            </common:RichTextColumns>
+
+                            <VisualStateManager.VisualStateGroups>
+
+                                <!-- Visual states reflect the application's view state inside the FlipView -->
+                                <VisualStateGroup x:Name="ApplicationViewStates">
+                                    <VisualState x:Name="FullScreenLandscape"/>
+                                    <VisualState x:Name="Filled"/>
+
+                                    <!-- Respect the narrower 100-pixel margin convention for portrait -->
+                                    <VisualState x:Name="FullScreenPortrait">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="richTextColumns" Storyboard.TargetProperty="Margin">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="97,0,87,57"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="image" Storyboard.TargetProperty="MaxHeight">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="400"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <!-- When snapped, the content is reformatted and scrolls vertically -->
+                                    <VisualState x:Name="Snapped">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="richTextColumns" Storyboard.TargetProperty="Margin">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="17,0,17,57"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="scrollViewer" Storyboard.TargetProperty="Style">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource VerticalScrollViewerStyle}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="richTextBlock" Storyboard.TargetProperty="Width">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="280"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="image" Storyboard.TargetProperty="MaxHeight">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="160"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </ScrollViewer>
+                    </UserControl>
+                </DataTemplate>
+            </FlipView.ItemTemplate>
+        </FlipView>
+
+        <!-- Back button and page title -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="pageTitle" Text="{Binding Title}" Style="{StaticResource PageHeaderTextStyle}" Grid.Column="1" Foreground="#FF161616"/>
+            <Button x:Name="backButton" Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
+        </Grid>
+
+        <VisualStateManager.VisualStateGroups>
+
+            <!-- Visual states reflect the application's view state -->
+            <VisualStateGroup x:Name="ApplicationViewStates">
+                <VisualState x:Name="FullScreenLandscape"/>
+                <VisualState x:Name="Filled"/>
+
+                <!-- The back button respects the narrower 100-pixel margin convention for portrait -->
+                <VisualState x:Name="FullScreenPortrait"/>
+
+                <!-- The back button and title have different styles when snapped -->
+                <VisualState x:Name="Snapped">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pageTitle" Storyboard.TargetProperty="Style">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedPageHeaderTextStyle}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedBackButtonStyle}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</common:LayoutAwarePage>
